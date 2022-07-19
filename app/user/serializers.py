@@ -17,6 +17,7 @@ from app.user.validators import (
     validate_password_uppercase,
 )
 from speaksfer.settings.base import EMAIL_USER
+from .models import FollowUnfollow, Profile
 
 User = get_user_model()
 
@@ -114,3 +115,19 @@ class VerifyEmailSerializer(serializers.Serializer):
         user.is_verified = True
         user.save()
         return user
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+class FollowUnfollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowUnfollow
+        fields = '__all__'
+
+
+class FollowUnfollowSerializerSorted(serializers.ModelSerializer):
+    class Meta:
+        model = FollowUnfollow
+        fields = ("user_id", "profile")

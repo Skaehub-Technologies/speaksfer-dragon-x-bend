@@ -99,3 +99,90 @@ class UserRegisterViewsTest(TestCase):
 
         self.assertEqual(resp.status_code, 400)
         self.assertIn("Invalid or expired token", str(resp.data))  # type: ignore[attr-defined]
+
+class TestUserFollowing(TestCase):
+    testuser: dict
+    user: Any
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.testuser = {
+            "username": fake.user_name(),
+            "email": fake.email(),
+            "password": fake.password(),
+        }
+        cls.user = User.objects.create_user(**cls.testuser)
+        return super().setUpClass()
+
+    # def test_wrong_user_follow(self) -> None:
+    #     url = reverse(
+    #         "follow_profile", kwargs={"user_pk": self.testuser}
+    #     )
+    #     response = self.client.post(url, format="json")
+    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)    
+
+    # def test_wrong_user_unfollow(self) -> None:
+    #     url = reverse(
+    #         "unfollow_profile", kwargs={"user_pk": self.testuser.get("user.id",2)}
+    #     )
+    #     response = self.client.delete(url, format="json")
+    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED) 
+
+    def test_user_follow(self) -> None:
+        url = reverse(
+            "follow_profile", kwargs={"user_pk": self.testuser.get("user.id")}
+        )
+        import pdb; pdb.set_trace()
+        response = self.client.post(
+            url,
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(
+            "Successfully followed", str(response.data)  # type: ignore[attr-defined]
+        )
+
+    # def test_user_unfollow(self) -> None:
+    #     self.client.post(
+    #         reverse(
+    #             "unfollow_profile/<str:user_pk>/", kwargs={"user_pk": self.testuser.user_pk}
+    #         ),
+    #         format="json",
+    #     )
+    #     url = reverse(
+    #         "unfollow_profile/<str:user_pk>/", kwargs={"user_pk": self.testuser.user_pk}
+    #     )
+    #     response = self.client.delete(
+    #         url,
+    #         format="json",
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertIn(
+    #         "Successfully unfollowed", str(response.data)  # type: ignore[attr-defined]
+    #     )
+
+    # def test_get_user_followers(self) -> None:
+    #     url = reverse(
+    #         "view_followers/<str:pk>/", kwargs={"user_id": self.testuser.user_pk}
+    #     )
+    #     response = self.client.get(
+    #         url,
+    #         format="json",
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertIn(
+    #         "You don't have followers", str(response.data)  # type: ignore[attr-defined]
+    #     )
+
+    # def test_user_cannot_follow_same(self) -> None:
+    #     url = reverse(
+    #         "follow_profile/<str:user_pk>/", kwargs={"user_id": self.testuser.user_id}
+    #     )
+    #     response = self.client.post(
+    #         url,
+    #         format="json",
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    #     self.assertIn(
+    #         "You are already followed the user", str(response.data)  # type: ignore[attr-defined]
+    #     )
